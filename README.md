@@ -2,11 +2,15 @@
 
 ## TODO LIST:
 
-- [ ] Fetch Dataset
-- [ ] Convert Data to scanpy adata
-- [ ] Create GCN
-    - [ ] Node Representation
-    - [ ] Edge Representation
+- [ ] Get Prepared Dataset
+- [ ] Preprocess Data
+    - [ ] Normalize
+    - [ ] Get HVGs
+- [X] Create GCN
+    - [X] Node Representation
+    - [X] Edge Representation
+- [ ] Create message passing training algorithm    
+    - [ ] Node Updates
     - [ ] Edge Updates
 - [ ] Project Graph to geometric space
     - [ ] Compute x, y coordinates
