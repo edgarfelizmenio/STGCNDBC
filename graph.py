@@ -5,6 +5,7 @@ import torch
 
 os.environ['DGLBACKEND'] = "pytorch"
 import numpy as np
+import torch.nn.functional as F
 
 rng = np.random.default_rng()
 
@@ -21,12 +22,11 @@ def create_dgl_graph(adata):
     g.ndata['init_coords'] = g.ndata['coords'] = torch.Tensor(coords)
     g = dgl.add_reverse_edges(g, copy_edata=True)
 
+    # distance: smaller - closer, bigger - farther
     distances = ot.dist(g.ndata['init_coords'], metric='euclidean')
-
-    dmin, dmax = torch.min(distances), torch.max(distances)
-    drange = dmax - dmin
-    distances = (distances - dmin)/drange
-    weights = 1 - distances - np.eye(n_nodes)
+    
+    # weights: 0 - closer, 1 - farther
+    weights = F.normalize(distances, p=2)
 
     g.edata['d'] = distances[g.edges()]
     g.edata['w'] = weights[g.edges()]

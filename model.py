@@ -5,6 +5,7 @@ import torch
 os.environ['DGLBACKEND'] = "pytorch" 
 import dgl.function as fn
 import torch.nn as nn
+import torch.nn.functional as F
 
 # Graph Data
     # g.ndata['x'] = torch.Tensor(adata.X.todense())
@@ -12,12 +13,26 @@ import torch.nn as nn
     # g.edata['d'] = torch.Tensor(distances)
     # g.edata['w'] = torch.Tensor(w)
 
-def weighted_mean_reduction(nodes):
-    no
+# def weighted_mean_reduction(nodes):
+#     no
 
-def calculate_similarity(edges):
-    print(edges.src)
-    print(edges.dst)
+# user-defined function for sending graph nodes
+
+# user-defined reduction function for updating graph nodes
+def reduce_neighborhood_score(nodes):
+    nodes['x'] += nodes.mailbox['x'] * nodes.mailbox['x']
+    w_neighborhood = (1 - nodes.mailbox['incident_weights']) * nodes.mailbox['x']
+    # multiply by 1-weight
+
+    return {'wn': w_neighborhood}
+
+# user-defined function for updating graph edges
+def update_edge_weights(edges):
+    new_weights = edges.data['w'] + edges.data['wu']
+    print(new_weights.shape)
+    new_weights = F.normalize(new_weights,dim=0)
+    print(new_weights)
+    return {'w': new_weights}
 
 class SCConv(nn.Module):
     def __init__(self):
@@ -52,5 +67,3 @@ def train(g, model):
     g.ndata['embedding'] = g.ndata['x']
     for e in range(200):
         model(g, features)
-
-print(calculate_similarity(g.edges))
