@@ -32,10 +32,10 @@ def create_dgl_graph(adata):
     g.edata['w'] = weights[g.edges()]
     return g
 
-def create_random_dgl_subgraph(g, size):
-    subgraph_nodes = rng.choice(g.num_nodes(), size, replace=False)
-    subgraph = g.subgraph(subgraph_nodes)
+def create_random_dgl_subgraph(g, size=None, nids=None):
+    if nids is None:
+        if size is None:
+            size = 20
+        nids = rng.choice(g.num_nodes(), size, replace=False)
+    subgraph = g.subgraph(nids)
     return subgraph
-
-def create_networkx_graph():
-    pass
